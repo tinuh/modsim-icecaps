@@ -32,25 +32,39 @@ def step(state):
     return state
 
 
-def simulate(steps):
-    state = State(X=318, N=3090, F=640000, I=25391)
+def simulate(steps, carbon):
+    state = State(X=carbon, N=3090, F=640000, I=25391)
     
     values = TimeSeries()
 
-    values[0] = state.X
+    values[0] = state.I
 
     for i in range(steps):
         state = step(state)
-        values[i+1] = state.X
+        values[i+1] = state.I
 
     return state, values
 
-_, iceOverTime = simulate(1000)
+def sweepC(conc1, conc2):
+    sweep = SweepSeries()
+    c = conc1
+    while c <= conc2:
+        _, results = simulate(1000, c)
+        sweep[c] = results[1000]
+        c += 10
+    return sweep
 
-iceOverTime.plot(style='-', label='')
+    
+        
+#_, iceOverTime = simulate(1000, 318)
 
-decorate(xlabel='Time (years)',
-            ylabel='Volume of Ice')
+#iceOverTime.plot(style='-', label='')
 
+#decorate(xlabel='Time (years)',
+#            ylabel='Volume of Ice')
+sw = sweepC(270, 420)
+sw.plot(style='-', label='')
+decorate(xlabel = 'Initial CO2 Concentration',
+             ylabel = 'Volume of Ice')
 
 plt.show()
