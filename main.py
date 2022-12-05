@@ -1,4 +1,5 @@
 from modsim import *
+import math
 
 parameters = {
     "Q_0":5,
@@ -23,8 +24,9 @@ parameters = {
     "mu_2": 1
 }
 
-def step(state):
-    state.X += parameters["Q_0"] + (1 - parameters["mu_1"]) * parameters["gamma"] * state.N - parameters["alpha"] * state.X - parameters["gamma_1"] * state.X * state.F
+def step(state, i):
+    #@state.X += parameters["Q_0"] + (1 - parameters["mu_1"]) * parameters["gamma"] * state.N - parameters["alpha"] * state.X - parameters["gamma_1"] * state.X * state.F
+    state.X += 3340/(1+84*(math.e**(-i/20)))
     state.N += parameters["s"] * state.N * (1 - state.N / parameters["L"]) - parameters["theta"] * state.X * state.N + parameters["pi"] * parameters["phi"] * state.N * state.F
     state.F += parameters["v"] * state.F * (1 - state.F / parameters["M"]) - parameters["phi"] * state.N * state.F + parameters["pi_1"] * parameters["gamma_1"] * state.X * state.F - parameters["beta"] * parameters["gamma_2"] * state.I * state.F + parameters["mu_2"] * parameters["sigma"] * state.F
     state.I += parameters["K"] - parameters["alpha_1"] * state.I - parameters["beta"] * state.I * state.X + parameters["alpha_2"] * state.I
@@ -40,7 +42,7 @@ def simulate(steps, carbon):
     values[0] = state.I
 
     for i in range(steps):
-        state = step(state)
+        state = step(state, i)
         values[i+1] = state.I
 
     return state, values
@@ -54,14 +56,16 @@ def sweepC(conc1, conc2):
         c += 10
     return sweep
 
-    
         
-#_, iceOverTime = simulate(1000, 318)
+_, iceOverTime = simulate(1000, 418)
 
-#iceOverTime.plot(style='-', label='')
+iceOverTime.plot(style='-', label='')
 
-#decorate(xlabel='Time (years)',
-#            ylabel='Volume of Ice')
+decorate(xlabel='Time (years)',
+           ylabel='Volume of Ice')
+
+plt.show()
+
 sw = sweepC(270, 420)
 sw.plot(style='-', label='')
 decorate(xlabel = 'Initial CO2 Concentration',
