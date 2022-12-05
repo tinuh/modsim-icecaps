@@ -25,8 +25,8 @@ parameters = {
 }
 
 def step(state, i):
-    #@state.X += parameters["Q_0"] + (1 - parameters["mu_1"]) * parameters["gamma"] * state.N - parameters["alpha"] * state.X - parameters["gamma_1"] * state.X * state.F
-    state.X += 3340/(1+84*(math.e**(-i/20)))
+    state.X += parameters["Q_0"] + (1 - parameters["mu_1"]) * parameters["gamma"] * state.N - parameters["alpha"] * state.X - parameters["gamma_1"] * state.X * state.F
+    #state.X += 3340/(1+84*(math.e**(-i/20)))
     state.N += parameters["s"] * state.N * (1 - state.N / parameters["L"]) - parameters["theta"] * state.X * state.N + parameters["pi"] * parameters["phi"] * state.N * state.F
     state.F += parameters["v"] * state.F * (1 - state.F / parameters["M"]) - parameters["phi"] * state.N * state.F + parameters["pi_1"] * parameters["gamma_1"] * state.X * state.F - parameters["beta"] * parameters["gamma_2"] * state.I * state.F + parameters["mu_2"] * parameters["sigma"] * state.F
     state.I += parameters["K"] - parameters["alpha_1"] * state.I - parameters["beta"] * state.I * state.X + parameters["alpha_2"] * state.I
