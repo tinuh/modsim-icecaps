@@ -22,7 +22,7 @@ parameters = {
     "sigma": 0.0026,
     "mu_1": 1,
     "mu_2": 1,
-    "chi": .05, #solution (carbon sinks)
+    "chi": 0.05, #solution (carbon sinks)
     "delta": .01 #degradation rate of the carbon sinks
 }
 
@@ -61,24 +61,27 @@ def sweepC(conc1, conc2):
         
 _, iceOverTime = simulate(100, 418)
 
-iceOverTime.plot(style='-', label='')
-
-decorate(title='Carbon sinks implemented',
-         xlabel='Time (years)',
-         ylabel='Volume of Ice')
-
-plt.show()
-
+iceOverTime.plot(style='-', label='Carbon sinks implemented')
 parameters["chi"] = 0
 _, iceOverTime2 = simulate(100, 418)
 
-iceOverTime2.plot(style='-', label='')
-
-decorate(title='No carbon sinks',
+iceOverTime2.plot(style='-', label='No carbon sinks')
+decorate(title='Volume of ice vs time, Effects of carbon sink implementation',
          xlabel='Time (years)',
          ylabel='Volume of Ice')
 
 plt.show()
+
+# parameters["chi"] = 0
+# _, iceOverTime2 = simulate(100, 418)
+
+# iceOverTime2.plot(style='-', label='')
+
+# decorate(title='No carbon sinks',
+#          xlabel='Time (years)',
+#          ylabel='Volume of Ice')
+
+# plt.show()
 # sw = sweepC(270, 420)
 # sw.plot(style='-', label='')
 # decorate(xlabel = 'Initial CO2 Concentration',
