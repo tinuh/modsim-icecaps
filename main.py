@@ -21,11 +21,13 @@ parameters = {
     "K":0.00235,
     "sigma": 0.0026,
     "mu_1": 1,
-    "mu_2": 1
+    "mu_2": 1,
+    "chi": .05, #solution (carbon sinks)
+    "delta": .01 #degradation rate of the carbon sinks
 }
 
 def step(state, i):
-    state.X += parameters["Q_0"] + (1 - parameters["mu_1"]) * parameters["gamma"] * state.N - parameters["alpha"] * state.X - parameters["gamma_1"] * state.X * state.F
+    state.X += parameters["Q_0"] + (1 - parameters["mu_1"]) * parameters["gamma"] * state.N - parameters["alpha"] * state.X - parameters["gamma_1"] * state.X * state.F - (parameters["chi"]-parameters["chi"]*parameters["delta"]*(i-1))*state.X
     #state.X += 3340/(1+84*(math.e**(-i/20)))
     state.N += parameters["s"] * state.N * (1 - state.N / parameters["L"]) - parameters["theta"] * state.X * state.N + parameters["pi"] * parameters["phi"] * state.N * state.F
     state.F += parameters["v"] * state.F * (1 - state.F / parameters["M"]) - parameters["phi"] * state.N * state.F + parameters["pi_1"] * parameters["gamma_1"] * state.X * state.F - parameters["beta"] * parameters["gamma_2"] * state.I * state.F + parameters["mu_2"] * parameters["sigma"] * state.F
@@ -51,24 +53,35 @@ def sweepC(conc1, conc2):
     sweep = SweepSeries()
     c = conc1
     while c <= conc2:
-        _, results = simulate(1000, c)
-        sweep[c] = results[1000]
+        _, results = simulate(100, c)
+        sweep[c] = results[100]
         c += 10
     return sweep
 
         
-_, iceOverTime = simulate(1000, 418)
+_, iceOverTime = simulate(100, 418)
 
 iceOverTime.plot(style='-', label='')
 
-decorate(xlabel='Time (years)',
-           ylabel='Volume of Ice')
+decorate(title='Carbon sinks implemented',
+         xlabel='Time (years)',
+         ylabel='Volume of Ice')
 
 plt.show()
 
-sw = sweepC(270, 420)
-sw.plot(style='-', label='')
-decorate(xlabel = 'Initial CO2 Concentration',
-             ylabel = 'Volume of Ice')
+parameters["chi"] = 0
+_, iceOverTime2 = simulate(100, 418)
+
+iceOverTime2.plot(style='-', label='')
+
+decorate(title='No carbon sinks',
+         xlabel='Time (years)',
+         ylabel='Volume of Ice')
 
 plt.show()
+# sw = sweepC(270, 420)
+# sw.plot(style='-', label='')
+# decorate(xlabel = 'Initial CO2 Concentration',
+#              ylabel = 'Volume of Ice')
+
+# plt.show()
